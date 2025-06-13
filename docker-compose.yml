@@ -1,16 +1,16 @@
 volumes:
-  innovv-cam-wifi:
+  wg_status_to_mqtt:
     external: true
     
 services:
-  innovv-cam-wifi:
+  wg_status_to_mqtt:
     # Uncomment one of these. Use :latest if you want the stable build, use :dev if you want the development build
-    image: iainbullock/innovv-cam-wifi:latest
-    #image: iainbullock/innovv-cam-wifi:dev
-    container_name: innovv-cam-wifid
+    image: iainbullock/wg_status_to_mqtt:latest
+    #image: iainbullock/wg_status_to_mqtt:dev
+    container_name: wg_status_to_mqtt
    
     volumes:
-      - innovv-cam-wifi:/config
+      - wg_status_to_mqtt:/config
     
     network_mode: host
     

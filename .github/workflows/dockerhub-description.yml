@@ -17,6 +17,6 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: iainbullock/innovv_cam_wifi
+        repository: iainbullock/wg_status_to_mqtt
         short-description: ${{ github.event.repository.description }}
         enable-url-completion: true

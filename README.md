@@ -1,6 +1,7 @@
-# innovv_cam_wifi_docker
-##Connect to Innovv Camera using Wifi
+# wg_status_to_mqtt
 
-https://github.com/iainbullock/innovv_cam_wifi_docker
+##Publish status of a Wireguard Server to MQTT providing Home Assistant entities
 
-For my personal use, not publically supported
+https://github.com/iainbullock/wg_status_to_mqtt/
+
+For my personal use, not publically supported (unless there's enough interest)
