@@ -18,8 +18,9 @@ services:
       - NET_ADMIN
 
     environment:
-      - AP_IFACE=wlan0
-      - UPLINK_IFACE=eth0
+      - MQTT_IP="localhost"
+      - MQTT_USERNAME="user" # change to yours
+      - MQTT_PASSWORD="pass" # change to yours
       
     # Allow opening of a shell in container
     tty: true
