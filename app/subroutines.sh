@@ -18,9 +18,9 @@ get_friendly_name() {
   f_name=$(awk -v pk=$public_key '{if ($1==pk) print $2}' /conf/friendly_names.conf)
   set -e
   if [ -z "${f_name}" ]; then
-    echo $f_name
-  else
     echo $public_key | md5sum | cut -d ' ' -f1
+  else
+    echo $f_name
   fi
 }
 
