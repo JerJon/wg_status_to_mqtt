@@ -9,6 +9,12 @@ echo https://github.com/iainbullock/wg_status_to_mqtt
 . /app/version.sh
 . /app/subroutines.sh
 
+# Initialise config files if not done previously
+if [ ! -f /config/friendly_names.conf ]; then
+ echo -e "Creating default friendly_names.conf file"
+ cp -n /conf/friendly_names.conf /config
+fi
+
 # Export environment setting defaults if not defined
 export MQTT_IP=${MQTT_IP:-127.0.0.1}
 export MQTT_PORT=${MQTT_PORT:-1883}
@@ -44,5 +50,5 @@ while IFS= read -r RESULT; do
   mqtt_autodiscovery $public_key
 
   # Send values to state topics
-  publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $transfer_rx $transfer_tx
+  publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $((transfer_rx / 1048576)) $((transfer_tx / 1048576))
 done < <(wg show all dump | awk '{if (NF==9) print $0};')

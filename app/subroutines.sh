@@ -15,7 +15,7 @@ check_status() {
 get_friendly_name() {
   public_key=$1
   set +e
-  f_name=$(awk -v pk=$public_key '{if ($1==pk) print $2}' /conf/friendly_names.conf)
+  f_name=$(awk -v pk=$public_key '{if ($1==pk) print $2}' /config/friendly_names.conf)
   set -e
   if [ -z "${f_name}" ]; then
     echo $public_key | md5sum | cut -d ' ' -f1
@@ -103,7 +103,6 @@ mqtt_autodiscovery() {
       "name": "'${DEVICE_NAME}'",
       "sw_version": "'${SW_VERSION}'"
      },
-     "device_class": "timestamp",
      "icon": "mdi:timeline-clock",
      "name": "Latest Handshake",
      "qos": "1",
@@ -124,6 +123,7 @@ mqtt_autodiscovery() {
       "sw_version": "'${SW_VERSION}'"
      },
      "device_class": "data_size",
+     "unit_of_measurement": "MB",
      "icon": "mdi:database-arrow-left-outline",
      "name": "Data Received",
      "qos": "1",
@@ -144,6 +144,7 @@ mqtt_autodiscovery() {
       "sw_version": "'${SW_VERSION}'"
      },
      "device_class": "data_size",
+     "unit_of_measurement": "MB",
      "icon": "mdi:database-arrow-right-outline",
      "name": "Data Transmitted",
      "qos": "1",
