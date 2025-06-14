@@ -27,28 +27,10 @@ echo "Configuration options are:
   MQTT_USERNAME=$MQTT_USERNAME
   MQTT_PASSWORD=Not Shown"
 
-# Read Wireguard status using wg command (use show subcommand with dump option)
-# Extract values for each peer in turn
-while IFS= read -r RESULT; do
-  public_key=$(echo $RESULT | awk '{print $2}')
-  endpoint_ip=$(echo $RESULT | awk '{print $4}' | cut -d: -f1)
-  allowed_ips=$(echo $RESULT | awk '{print $5}')
-  latest_handshake=$(echo $RESULT | awk '{print $6}')
-  transfer_rx=$(echo $RESULT | awk '{print $7}')
-  transfer_tx=$(echo $RESULT | awk '{print $8}')
+# Main Loop
+while : ; do
+  read_and_update
+  sleep 60
+done
 
-  echo Obtaining status for $(get_friendly_name $public_key)
-  #echo public_key $public_key
-  #echo endpoint_ip $endpoint_ip
-  #echo allowed_ips $allowed_ips
-  #echo latest_handshake $latest_handshake
-  #echo status $(check_status $latest_handshake)
-  #echo transfer_rx $transfer_rx
-  #echo transfer_tx $transfer_tx
-
-  # Create Home Assistant entities for the peer using MQTT autodiscovery
-  mqtt_autodiscovery $public_key
-
-  # Send values to state topics
-  publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $((transfer_rx / 1048576)) $((transfer_tx / 1048576))
-done < <(wg show all dump | awk '{if (NF==9) print $0};')
+echo Error Main Loop terminated unexpectedly

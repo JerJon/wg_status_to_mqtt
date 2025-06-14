@@ -1,5 +1,26 @@
 #!/bin/ash
 
+# Read Wireguard status using wg command (use show subcommand with dump option)
+# Extract values for each peer in turn, and publish to MQTT
+read_and_update() {
+  while IFS= read -r RESULT; do
+    public_key=$(echo $RESULT | awk '{print $2}')
+    endpoint_ip=$(echo $RESULT | awk '{print $4}' | cut -d: -f1)
+    allowed_ips=$(echo $RESULT | awk '{print $5}')
+    latest_handshake=$(echo $RESULT | awk '{print $6}')
+    transfer_rx=$(echo $RESULT | awk '{print $7}')
+    transfer_tx=$(echo $RESULT | awk '{print $8}')
+
+    echo Obtaining status for $(get_friendly_name $public_key)
+
+    # Create Home Assistant entities for the peer using MQTT autodiscovery
+    mqtt_autodiscovery $public_key
+
+    # Send values to state topics
+    publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $((transfer_rx / 1048576)) $((transfer_tx / 1048576))
+  done < <(wg show all dump | awk '{if (NF==9) print $0};')
+}
+
 # Function to detect online status (handshake <= 5 minutes ago)
 check_status() {
  seconds=$(($(date +%s) - $1))
@@ -103,6 +124,7 @@ mqtt_autodiscovery() {
       "name": "'${DEVICE_NAME}'",
       "sw_version": "'${SW_VERSION}'"
      },
+     "device_class": "timestamp",
      "icon": "mdi:timeline-clock",
      "name": "Latest Handshake",
      "qos": "1",
@@ -181,7 +203,7 @@ publish_state_topics(){
   TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
   ENDPOINT_IP=$2
   ALLOWED_IPS=$3
-  LATEST_HANDSHAKE=$4
+  LATEST_HANDSHAKE=$(date -d @$4 +'%Y-%m-%d %H:%M:%S+00:00')
   ONLINE=$(check_status $LATEST_HANDSHAKE)
   TRANSFER_RX=$5
   TRANSFER_TX=$6
