@@ -66,9 +66,9 @@ publish_state_topics(){
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -m \
     '{
       "device_name": "'$'{DEVICE_NAME:=-}'",
-      "endpoint_ip": "$'{ENDPOINT_IP:=-}'",
-      "allowed_ips": "$'{ALLOWED_IPS:=-}'",
-      "latest_handshake": "$'{LATEST_HANDSHAKE:=-}'",
+      "endpoint_ip": "'${ENDPOINT_IP:=-}'",
+      "allowed_ips": "'${ALLOWED_IPS:=-}'",
+      "latest_handshake": "'${LATEST_HANDSHAKE:=-}'",
       "online": "'${ONLINE:-Off}'",
       "transfer_rx": "'${TRANSFER_RX:=-}'",
       "transfer_tx": "'${TRANSFER_TX:=-}'"
