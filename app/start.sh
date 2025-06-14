@@ -30,6 +30,7 @@ echo "Configuration options are:
 # Main Loop
 while : ; do
   read_and_update
+  echo Sleeping for 60 secs
   sleep 60
 done
 

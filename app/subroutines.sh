@@ -213,7 +213,7 @@ publish_state_topics(){
       "device_name": "'${DEVICE_NAME:=-}'",
       "endpoint_ip": "'${ENDPOINT_IP:=-}'",
       "allowed_ips": "'${ALLOWED_IPS:=-}'",
-      "latest_handshake": "'${LATEST_HANDSHAKE:=-}'",
+      "latest_handshake": "'"${LATEST_HANDSHAKE:=-}"'",
       "online": "'${ONLINE:-Off}'",
       "transfer_rx": "'${TRANSFER_RX:=-}'",
       "transfer_tx": "'${TRANSFER_TX:=-}'"
