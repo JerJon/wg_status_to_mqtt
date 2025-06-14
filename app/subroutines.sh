@@ -11,8 +11,8 @@ check_status() {
   fi
 }
 
-Look up public key in friendly name file, return matching name, or md5 hash if no match
-get_friendly_name {
+# Look up public key in friendly name file, return matching name, or md5 hash if no match
+get_friendly_name() {
   public_key=$1
   echo $public_key | md5sum | cut -d ' ' -f1
 }
@@ -22,7 +22,7 @@ mqtt_autodiscovery() {
   DEVICE_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
   DEVICE_NAME=$(get_friendly_name $1)
   TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u '${MQTT_USERNAME}' -P '${MQTT_PASSWORD}' -t "homeassistant/binary_sensor/${DEVICE_ID}/online/config" -m \
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/binary_sensor/${DEVICE_ID}/online/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'/binary_sensor/online",
      "device": {
