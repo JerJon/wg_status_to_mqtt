@@ -1,4 +1,5 @@
 #!/bin/ash
+set -e
 
 echo Starting wg_status_to_mqtt container....
 echo Iain Bullock June 2025
