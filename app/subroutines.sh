@@ -29,9 +29,131 @@ mqtt_autodiscovery() {
   DEVICE_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
   DEVICE_NAME=$(get_friendly_name $1)
   TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
+
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/name/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.device_name }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "None",
+     "icon": "mdi:identifier",
+     "name": "Name",
+     "qos": "1",
+     "unique_id": "'${DEVICE_ID}'_name"
+    }'
+
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/endpoint/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.endpoint_ip }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "None",
+     "icon": "mdi:ip-outline",
+     "name": "Endpoint IP",
+     "qos": "1",
+     "unique_id": "'${DEVICE_ID}'_endpoint"
+    }'
+
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/allowed_ips/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.allowed_ips }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "None",
+     "icon": "mdi:ip",
+     "name": "Allowed IPs",
+     "qos": "1",
+     "unique_id": "'${DEVICE_ID}'_allowed_ips"
+    }'
+
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/handshake/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.latest_handshake }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "timestamp",
+     "icon": "mdi:timeline-clock",
+     "name": "Latest Handshake",
+     "qos": "1",
+     "unique_id": "'${DEVICE_ID}'_handshake"
+    }'
+
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/rx/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.transfer_rx }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "data_size",
+     "icon": "mdi:database-arrow-left-outline",
+     "name": "Data Received",
+     "qos": "1",
+     "unique_id": "'${DEVICE_ID}'_rx"
+    }'
+
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/tx/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.transfer_tx }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "data_size",
+     "icon": "mdi:database-arrow-right-outline",
+     "name": "Data Transmitted",
+     "qos": "1",
+     "unique_id": "'${DEVICE_ID}'_tx"
+    }'
+
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/binary_sensor/${DEVICE_ID}/online/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.online }}",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -65,7 +187,7 @@ publish_state_topics(){
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -m \
     '{
-      "device_name": "'$'{DEVICE_NAME:=-}'",
+      "device_name": "'${DEVICE_NAME:=-}'",
       "endpoint_ip": "'${ENDPOINT_IP:=-}'",
       "allowed_ips": "'${ALLOWED_IPS:=-}'",
       "latest_handshake": "'${LATEST_HANDSHAKE:=-}'",
