@@ -24,6 +24,7 @@ while IFS= read -r RESULT; do
   echo endpoint_ip $endpoint_ip
   echo allowed_ips $allowed_ips
   echo latest_handshake $latest_handshake
+  echo status $(check_status $latest_handshake)
   echo transfer_rx $transfer_rx
   echo transfer_tx $transfer_tx
 
