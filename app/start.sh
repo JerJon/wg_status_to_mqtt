@@ -1,5 +1,7 @@
 #!/bin/ash
 
+echo Starting wg_status_to_mqtt container....
+
 # Load subroutines
 . /app/version.sh
 . /app/subroutines.sh
@@ -8,6 +10,11 @@
 export MQTT_IP=${MQTT_IP:-localhost}
 export MQTT_USERNAME=${MQTT_USERNAME:-}
 export MQTT_PASSWORD=${MQTT_PASSWORD:-}
+
+echo "Configuration options are:
+  MQTT_IP=$MQTT_IP
+  MQTT_USERNAME=$MQTT_USERNAME
+  MQTT_PASSWORD=Not Shown"
 
 # Read Wireguard status using wg command (use show subcommand with dump option)
 # Extract values for each peer in turn

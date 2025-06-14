@@ -12,8 +12,8 @@ check_status() {
 }
 
 # Function to create Home Assistant entities via MQTT autodiscovery
-mqtt_autodiscovery {
-  DEVICE_ID=wg_status_to_mqtt_$1
+mqtt_autodiscovery() {
+  DEVICE_ID=$1
 
   mosquitto_pub -h $MQTT_IP -u $MQTT_USERNAME -P $MQTT_PASSWORD -t "homeassistant/binary_sensor/${DEVICE_ID}/online/config" -m \
     '{
