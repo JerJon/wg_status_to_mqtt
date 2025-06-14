@@ -1,6 +1,7 @@
 #!/bin/ash
 
 # Load subroutines
+. /app/version.sh
 . /app/subroutines.sh
 
 # Export environment setting defaults if not defined
@@ -8,10 +9,8 @@ export MQTT_IP=${MQTT_IP:-localhost}
 export MQTT_USERNAME=${MQTT_USERNAME:-}
 export MQTT_PASSWORD=${MQTT_PASSWORD:-}
 
-# Main Loop
-# Based on credits:
-# https://gist.github.com/mehstg/466045bbd0316d7be0a196c1a049477e
-# https://gist.github.com/kafeg/51689dcad1b175481d7586d36a2b5af8
+# Read Wireguard status using wg command (use show subcommand with dump option)
+# Extract values for each peer in turn
 while IFS= read -r RESULT; do
   public_key_hash=$(echo $RESULT | awk '{print $2}' | md5sum | cut -d ' ' -f1)
   endpoint_ip=$(echo $RESULT | awk '{print $4}' | cut -d: -f1)
@@ -27,5 +26,8 @@ while IFS= read -r RESULT; do
   echo status $(check_status $latest_handshake)
   echo transfer_rx $transfer_rx
   echo transfer_tx $transfer_tx
+
+  # Create Home Assistant entities for the peer using MQTT autodiscovery
+  mqtt_autodiscovery $public_key_hash
 
 done < <(wg show all dump | awk '{if (NF==9) print $0};')
