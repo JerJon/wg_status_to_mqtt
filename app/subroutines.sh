@@ -31,7 +31,7 @@ mqtt_autodiscovery() {
   TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/binary_sensor/${DEVICE_ID}/online/config" -m \
     '{
-     "state_topic": "'${TOPIC_ROOT}'/binary_sensor/online",
+     "state_topic": "'${TOPIC_ROOT}'",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -46,6 +46,32 @@ mqtt_autodiscovery() {
      "name": "Online",
      "qos": "1",
      "unique_id": "'${DEVICE_ID}'_online"
+    }'
+
+}
+
+# Function to publish values to MQTT state topics
+publish_state_topics(){
+  PUBLIC_KEY=$1
+  DEVICE_ID=$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
+  DEVICE_NAME=$(get_friendly_name $1)
+  TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
+  ENDPOINT_IP=$2
+  ALLOWED_IPS=$3
+  LATEST_HANDSHAKE=$4
+  ONLINE=(check_status $LATEST_HANDSHAKE)
+  TRANSFER_RX=$5
+  TRANSFER_TX=$6
+
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "'${TOPIC_ROOT}'" -m \
+    '{
+      "device_name": "${DEVICE_NAME:=-}",
+      "endpoint_ip": "${ENDPOINT_IP:=-}",
+      "allowed_ips": "$(ALLOWED_IPS:=-}",
+      "latest_handshake": "${LATEST_HANDSHAKE:=-}",
+      "online": "${ONLINE:-Off}",
+      "transfer_rx": "$TRANSFER_RX:=-}",
+      "transfer_tx": "$TRANSFER_TX:=-}"
     }'
 
 }
