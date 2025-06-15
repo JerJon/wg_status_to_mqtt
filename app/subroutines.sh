@@ -71,105 +71,105 @@ mqtt_autodiscovery() {
 #     "unique_id": "'${PEER_ID}'_name"
 #    }'
 
-#  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/endpoint/config" -m \
-#    '{
-#     "state_topic": "'${TOPIC_ROOT}'",
-#     "value_template": "{{ value_json.endpoint_ip }}",
-#     "device": {
-#      "identifiers": [
-#      "'${DEVICE_ID}'"
-#      ],
-#      "manufacturer": "wg_status_to_mqtt",
-#      "model": "Wireguard Status to MQTT",
-#      "name": "'${DEVICE_NAME}'",
-#      "sw_version": "'${SW_VERSION}'"
-#     },
-#     "icon": "mdi:ip-outline",
-#     "name": "Endpoint IP",
-#     "qos": "1",
-#     "unique_id": "'${PEER_ID}'_endpoint"
-#    }'
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/endpoint/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.endpoint_ip }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "icon": "mdi:ip-outline",
+     "name": "'${PEER_NAME}' Endpoint",
+     "qos": "1",
+     "unique_id": "'${PEER_ID}'_endpoint"
+    }'
 
-#  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/allowed_ips/config" -m \
-#    '{
-#     "state_topic": "'${TOPIC_ROOT}'",
-#     "value_template": "{{ value_json.allowed_ips }}",
-#     "device": {
-#      "identifiers": [
-#      "'${DEVICE_ID}'"
-#      ],
-#      "manufacturer": "wg_status_to_mqtt",
-#      "model": "Wireguard Status to MQTT",
-#      "name": "'${DEVICE_NAME}'",
-#      "sw_version": "'${SW_VERSION}'"
-#     },
-#     "icon": "mdi:ip",
-#     "name": "Allowed IPs",
-#     "qos": "1",
-#     "unique_id": "'${PEER_ID}'_allowed_ips"
-#    }'
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/allowed_ips/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.allowed_ips }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "icon": "mdi:ip",
+     "name": "'${PEER_NAME}' IPs",
+     "qos": "1",
+     "unique_id": "'${PEER_ID}'_allowed_ips"
+    }'
 
-#  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/handshake/config" -m \
-#    '{
-#     "state_topic": "'${TOPIC_ROOT}'",
-#     "value_template": "{{ value_json.latest_handshake }}",
-#     "device": {
-#      "identifiers": [
-#      "'${DEVICE_ID}'"
-#      ],
-#      "manufacturer": "wg_status_to_mqtt",
-#      "model": "Wireguard Status to MQTT",
-#      "name": "'${DEVICE_NAME}'",
-#      "sw_version": "'${SW_VERSION}'"
-#     },
-#     "device_class": "timestamp",
-#     "icon": "mdi:timeline-clock",
-#     "name": "Latest Handshake",
-#     "qos": "1",
-#     "unique_id": "'${PEER_ID}'_handshake"
-#    }'
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/handshake/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.latest_handshake }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "timestamp",
+     "icon": "mdi:timeline-clock",
+     "name": "'${PEER_NAME}' Handshake",
+     "qos": "1",
+     "unique_id": "'${PEER_ID}'_handshake"
+    }'
 
-#  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/rx/config" -m \
-#    '{
-#     "state_topic": "'${TOPIC_ROOT}'",
- #    "value_template": "{{ value_json.transfer_rx }}",
-#     "device": {
-#      "identifiers": [
-#      "'${DEVICE_ID}'"
-#      ],
-#      "manufacturer": "wg_status_to_mqtt",
-#      "model": "Wireguard Status to MQTT",
-#      "name": "'${DEVICE_NAME}'",
-#      "sw_version": "'${SW_VERSION}'"
-#     },
-#     "device_class": "data_size",
-#     "unit_of_measurement": "MB",
-#     "icon": "mdi:database-arrow-left-outline",
-#     "name": "Data Received",
-#     "qos": "1",
-#     "unique_id": "'${PEER_ID}'_rx"
-#    }'
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/rx/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.transfer_rx }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "data_size",
+     "unit_of_measurement": "MB",
+     "icon": "mdi:database-arrow-left-outline",
+     "name": "'${PEER_NAME}' Rx",
+     "qos": "1",
+     "unique_id": "'${PEER_ID}'_rx"
+    }'
 
-#  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/tx/config" -m \
-#    '{
-#     "state_topic": "'${TOPIC_ROOT}'",
-#     "value_template": "{{ value_json.transfer_tx }}",
-#     "device": {
-#      "identifiers": [
-#      "'${DEVICE_ID}'"
-#      ],
-#      "manufacturer": "wg_status_to_mqtt",
-#      "model": "Wireguard Status to MQTT",
-#      "name": "'${DEVICE_NAME}'",
-#      "sw_version": "'${SW_VERSION}'"
-#     },
-#     "device_class": "data_size",
-#     "unit_of_measurement": "MB",
-#     "icon": "mdi:database-arrow-right-outline",
-#     "name": "Data Transmitted",
-#     "qos": "1",
-#     "unique_id": "'${PEER_ID}'_tx"
-#    }'
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/tx/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.transfer_tx }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "data_size",
+     "unit_of_measurement": "MB",
+     "icon": "mdi:database-arrow-right-outline",
+     "name": "'${PEER_NAME}' Tx",
+     "qos": "1",
+     "unique_id": "'${PEER_ID}'_tx"
+    }'
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/binary_sensor/${PEER_ID}/online/config" -m \
     '{
@@ -186,7 +186,7 @@ mqtt_autodiscovery() {
      },
      "device_class": "connectivity",
      "icon": "mdi:check-network-outline",
-     "name": "'${PEER_NAME}'",
+     "name": "'${PEER_NAME}' Online",
      "qos": "1",
      "unique_id": "'${PEER_ID}'_online"
     }'
