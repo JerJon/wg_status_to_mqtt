@@ -3,6 +3,7 @@
 # Parse and update values for each peer
 update_values() {
   # Extract values for each peer in turn, and publish to MQTT
+  results=OFF
   while IFS= read -r RESULT; do
     public_key=$(echo $RESULT | awk '{print $2}')
     endpoint_ip=$(echo $RESULT | awk '{print $4}' | cut -d: -f1)
@@ -15,19 +16,20 @@ update_values() {
 
     # Send values to state topics
     publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $((transfer_rx / 1048576)) $((transfer_tx / 1048576))
+    
+    results=ON
   done < <(wg show all dump | awk '{if (NF==9) print $0};')
+  
+  # Publish state_topics for server on / off
+  publish_server_status $results
 }
 
 # Send autodiscovery messages for peers and server
 update_autodiscovery() {
   echo Sending MQTT autodiscovery messages
 
-  # Extract public key for each server in turn, and send autodiscovery messages
-  while IFS= read -r RESULT; do
-    public_key=$(echo $RESULT | awk '{print $3}')
-    mqtt_autodiscovery_servers $public_key
-  done < <(wg show all dump | awk '{if (NF==5) print $0};')
-} 
+  # Send autodiscovery message for server
+  mqtt_autodiscovery_server
 
   # Extract public key for each peer in turn, and send autodiscovery messages
   while IFS= read -r RESULT; do
@@ -61,9 +63,9 @@ get_friendly_name() {
 }
 
 # Function to create Home Assistant entities via MQTT autodiscovery for servers
-mqtt_autodiscovery_servers() {
-  SERVER_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
-  SERVER_NAME=$(get_friendly_name $1)
+mqtt_autodiscovery_server() {
+  SERVER_ID=$DEVICE_NAME
+  SERVER_NAME=$DEVICE_NAME
   TOPIC_ROOT=wg_status_to_mqtt/$SERVER_ID
   DEVICE_ID=wg_status_to_mqtt_$DEVICE_NAME
 
@@ -240,4 +242,13 @@ publish_state_topics(){
       "transfer_tx": "'${TRANSFER_TX:=-}'"
     }'
 
+}
+
+publish_server_status() {
+  status=$1
+  TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_NAME
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -m \
+    '{
+      "online": "'${status:-Off}'"
+    }'
 }
