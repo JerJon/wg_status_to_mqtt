@@ -102,6 +102,8 @@ mqtt_autodiscovery_peers() {
      "value_template": "{{ value_json.endpoint_ip }}",
      "availability_topic": "'${TOPIC_ROOT}'",
      "availability_template": "{{ value_json.online }}",
+     "payload_available": "ON",
+     "payload_not_available": "OFF",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -121,6 +123,10 @@ mqtt_autodiscovery_peers() {
     '{
      "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.allowed_ips }}",
+     "availability_topic": "'${TOPIC_ROOT}'",
+     "availability_template": "{{ value_json.online }}",
+     "payload_available": "ON",
+     "payload_not_available": "OFF",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -140,6 +146,10 @@ mqtt_autodiscovery_peers() {
     '{
      "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.latest_handshake }}",
+     "availability_topic": "'${TOPIC_ROOT}'",
+     "availability_template": "{{ value_json.online }}",
+     "payload_available": "ON",
+     "payload_not_available": "OFF",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -160,6 +170,10 @@ mqtt_autodiscovery_peers() {
     '{
      "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.transfer_rx }}",
+     "availability_topic": "'${TOPIC_ROOT}'",
+     "availability_template": "{{ value_json.online }}",
+     "payload_available": "ON",
+     "payload_not_available": "OFF",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -181,6 +195,10 @@ mqtt_autodiscovery_peers() {
     '{
      "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.transfer_tx }}",
+     "availability_topic": "'${TOPIC_ROOT}'",
+     "availability_template": "{{ value_json.online }}",
+     "payload_available": "ON",
+     "payload_not_available": "OFF",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -202,6 +220,10 @@ mqtt_autodiscovery_peers() {
     '{
      "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.online }}",
+     "availability_topic": "'${TOPIC_ROOT}'",
+     "availability_template": "{{ value_json.online }}",
+     "payload_available": "ON",
+     "payload_not_available": "OFF",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
