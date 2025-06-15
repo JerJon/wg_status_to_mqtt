@@ -22,7 +22,7 @@ services:
       - MQTT_PORT=1883
       - MQTT_USERNAME=user # change to yours
       - MQTT_PASSWORD=pass # change to yours
-      - POLL_DELAY=120 # must be a multiple of 10, suggest no less than 60
+      - POLL_DELAY=120
       - DEVICE_NAME=Wireguard_Server
       
     # Allow opening of a shell in container

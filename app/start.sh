@@ -33,9 +33,6 @@ echo "Configuration options are:
 
 # Main Loop
 while :; do
-  # Get wg data
-  export WG_DATA=$(wg show all dump)
-
   # Publish autodiscovery messages every 10th iteration of the sub loop
   update_autodiscovery
   
@@ -44,7 +41,7 @@ while :; do
   while [ $i -le 10 ]; do
     echo Sleeping for $POLL_DELAY secs
     sleep $POLL_DELAY
-    i=$((i + POLL_DELAY))
+    i=$((i + 1))
     
     update_values
   done
