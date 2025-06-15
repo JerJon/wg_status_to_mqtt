@@ -64,7 +64,6 @@ mqtt_autodiscovery() {
       "name": "'${DEVICE_NAME}'",
       "sw_version": "'${SW_VERSION}'"
      },
-     "device_class": "None",
      "icon": "mdi:identifier",
      "name": "Name",
      "qos": "1",
@@ -84,7 +83,6 @@ mqtt_autodiscovery() {
       "name": "'${DEVICE_NAME}'",
       "sw_version": "'${SW_VERSION}'"
      },
-     "device_class": "None",
      "icon": "mdi:ip-outline",
      "name": "Endpoint IP",
      "qos": "1",
@@ -104,7 +102,6 @@ mqtt_autodiscovery() {
       "name": "'${DEVICE_NAME}'",
       "sw_version": "'${SW_VERSION}'"
      },
-     "device_class": "None",
      "icon": "mdi:ip",
      "name": "Allowed IPs",
      "qos": "1",
