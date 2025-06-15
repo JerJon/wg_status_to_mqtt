@@ -93,7 +93,7 @@ mqtt_autodiscovery_server() {
 mqtt_autodiscovery_peers() {
   PEER_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
   PEER_NAME=$(get_friendly_name $1)
-  TOPIC_ROOT=wg_status_to_mqtt/$PEER_ID
+  TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_NAME/$PEER_ID
   DEVICE_ID=wg_status_to_mqtt_$DEVICE_NAME
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/endpoint/config" -m \
@@ -222,7 +222,7 @@ mqtt_autodiscovery_peers() {
 publish_state_topics(){
   PUBLIC_KEY=$1
   PEER_NAME=$(get_friendly_name $1)
-  TOPIC_ROOT=wg_status_to_mqtt/$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
+  TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_NAME/$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
   ENDPOINT_IP=$2
   ALLOWED_IPS=$3
   LATEST_HANDSHAKE=$(date -d @$4 +'%Y-%m-%d %H:%M:%S+00:00')
