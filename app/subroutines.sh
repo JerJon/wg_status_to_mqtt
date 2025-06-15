@@ -1,8 +1,9 @@
 #!/bin/ash
 
-# Read Wireguard status using wg command (use show subcommand with dump option)
-# Extract values for each peer in turn, and publish to MQTT
 read_and_update() {
+loop_count=$1
+
+# Extract values for each peer in turn, and publish to MQTT
   while IFS= read -r RESULT; do
     public_key=$(echo $RESULT | awk '{print $2}')
     endpoint_ip=$(echo $RESULT | awk '{print $4}' | cut -d: -f1)
@@ -13,8 +14,12 @@ read_and_update() {
 
     echo Obtaining status for $(get_friendly_name $public_key)
 
-    # Create Home Assistant entities for the peer using MQTT autodiscovery
-    mqtt_autodiscovery $public_key
+    # Resend autodiscovery messages every 10 interations of main loop
+    mod=$((loop_count % 10))
+    if [ $mod -eq 0 ]; then
+      echo Sending MQTT autodiscovery messages
+      mqtt_autodiscovery $public_key
+    fi
 
     # Send values to state topics
     publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $((transfer_rx / 1048576)) $((transfer_tx / 1048576))

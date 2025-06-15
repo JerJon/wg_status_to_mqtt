@@ -32,10 +32,15 @@ echo "Configuration options are:
   DEVICE_NAME=$DEVICE_NAME"
 
 # Main Loop
-while : ; do
-  read_and_update
-  echo Sleeping for $POLL_DELAY secs
-  sleep $POLL_DELAY
+while :; do
+  # Have a counter so we don't publish autodiscovery messages every iteration of the loop
+  i=0
+  while [ $i -le 720 ]; do
+    read_and_update $i
+    echo Sleeping for $POLL_DELAY secs
+    sleep $POLL_DELAY
+    i=$((i + POLL_DELAY))
+  done
 done
 
 echo Error Main Loop terminated unexpectedly
