@@ -258,8 +258,5 @@ publish_server_status() {
     '{
       "online": "OFF"
     }'
-    # Delete state topic values
-    TOPIC_ROOT=wg_status_to_mqtt
-    mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -d
-
+  fi
 }
