@@ -26,9 +26,9 @@ check_status() {
  seconds=$(($(date +%s) - $1))
 
   if [[ $seconds -lt 300 ]]; then
-    echo "On"
+    echo "ON"
   else
-    echo "Off"
+    echo "OFF"
   fi
 }
 
@@ -202,7 +202,7 @@ publish_state_topics(){
   ENDPOINT_IP=$2
   ALLOWED_IPS=$3
   LATEST_HANDSHAKE=$(date -d @$4 +'%Y-%m-%d %H:%M:%S+00:00')
-  ONLINE=$(check_status $LATEST_HANDSHAKE)
+  ONLINE=$(check_status $4)
   TRANSFER_RX=$5
   TRANSFER_TX=$6
 
