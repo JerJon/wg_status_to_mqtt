@@ -33,14 +33,22 @@ echo "Configuration options are:
 
 # Main Loop
 while :; do
-  # Have a counter so we don't publish autodiscovery messages every iteration of the loop
+  # Get wg data
+  export WG_DATA=$(wg show all dump)
+
+  # Publish autodiscovery messages every 10th iteration of the sub loop
+  update_autodiscovery
+  
+  # Sub loop which updates values every time
   i=0
-  while [ $i -le 720 ]; do
-    read_and_update $i
+  while [ $i -le 10 ]; do
     echo Sleeping for $POLL_DELAY secs
     sleep $POLL_DELAY
     i=$((i + POLL_DELAY))
+    
+    update_values
   done
+
 done
 
 echo Error Main Loop terminated unexpectedly

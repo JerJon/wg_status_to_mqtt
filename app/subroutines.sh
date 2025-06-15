@@ -1,9 +1,10 @@
 #!/bin/ash
 
-read_and_update() {
-loop_count=$1
+# Parse and update values for each peer
+update_values() {
+  wg_data=$1
 
-# Extract values for each peer in turn, and publish to MQTT
+  # Extract values for each peer in turn, and publish to MQTT
   while IFS= read -r RESULT; do
     public_key=$(echo $RESULT | awk '{print $2}')
     endpoint_ip=$(echo $RESULT | awk '{print $4}' | cut -d: -f1)
@@ -14,16 +15,21 @@ loop_count=$1
 
     echo Obtaining status for $(get_friendly_name $public_key)
 
-    # Resend autodiscovery messages every 10 interations of main loop
-    mod=$((loop_count % 10))
-    if [ $mod -eq 0 ]; then
-      echo Sending MQTT autodiscovery messages
-      mqtt_autodiscovery $public_key
-    fi
-
     # Send values to state topics
     publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $((transfer_rx / 1048576)) $((transfer_tx / 1048576))
-  done < <(wg show all dump | awk '{if (NF==9) print $0};')
+  done < <(echo $WG_DATA | awk '{if (NF==9) print $0};')
+}
+
+# Send autodiscovery messages for each peer
+update_autodiscovery() {
+  wg_data=$1
+  echo Sending MQTT autodiscovery messages
+
+  # Extract public key for each peer in turn, and send autodiscovery messages
+  while IFS= read -r RESULT; do
+    public_key=$(echo $RESULT | awk '{print $2}')
+    mqtt_autodiscovery $public_key
+  done < <(echo $WG_DATA | awk '{if (NF==9) print $0};')
 }
 
 # Function to detect online status (handshake <= 5 minutes ago)
