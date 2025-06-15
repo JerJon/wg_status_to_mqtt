@@ -23,6 +23,7 @@ services:
       - MQTT_USERNAME=user # change to yours
       - MQTT_PASSWORD=pass # change to yours
       - POLL_DELAY=120
+      - DEVICE_NAME=Wireguard_Server
       
     # Allow opening of a shell in container
     tty: true

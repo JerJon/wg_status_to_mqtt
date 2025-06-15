@@ -48,7 +48,7 @@ get_friendly_name() {
 # Function to create Home Assistant entities via MQTT autodiscovery
 mqtt_autodiscovery() {
   DEVICE_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
-  DEVICE_NAME=$(get_friendly_name $1)
+  #DEVICE_NAME=$(get_friendly_name $1)
   TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/name/config" -m \
@@ -196,7 +196,7 @@ mqtt_autodiscovery() {
 publish_state_topics(){
   PUBLIC_KEY=$1
   DEVICE_ID=$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
-  DEVICE_NAME=$(get_friendly_name $1)
+  PEER_NAME=$(get_friendly_name $1)
   TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
   ENDPOINT_IP=$2
   ALLOWED_IPS=$3
@@ -207,7 +207,7 @@ publish_state_topics(){
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -m \
     '{
-      "device_name": "'${DEVICE_NAME:=-}'",
+      "peer_name": "'${PEER_NAME:=-}'",
       "endpoint_ip": "'${ENDPOINT_IP:=-}'",
       "allowed_ips": "'${ALLOWED_IPS:=-}'",
       "latest_handshake": "'"${LATEST_HANDSHAKE:=-}"'",
