@@ -47,14 +47,15 @@ get_friendly_name() {
 
 # Function to create Home Assistant entities via MQTT autodiscovery
 mqtt_autodiscovery() {
-  DEVICE_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
+  PEER_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
   #DEVICE_NAME=$(get_friendly_name $1)
-  TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
+  TOPIC_ROOT=wg_status_to_mqtt/$PEER_ID
+  DEVICE_ID=wg_status_to_mqtt_$DEVICE_NAME
 
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/name/config" -m \
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/name/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'",
-     "value_template": "{{ value_json.device_name }}",
+     "value_template": "{{ value_json.peer_name }}",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -67,10 +68,10 @@ mqtt_autodiscovery() {
      "icon": "mdi:identifier",
      "name": "Name",
      "qos": "1",
-     "unique_id": "'${DEVICE_ID}'_name"
+     "unique_id": "'${PEER_ID}'_name"
     }'
 
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/endpoint/config" -m \
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/endpoint/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'",
      "value_template": "{{ value_json.endpoint_ip }}",
@@ -86,10 +87,10 @@ mqtt_autodiscovery() {
      "icon": "mdi:ip-outline",
      "name": "Endpoint IP",
      "qos": "1",
-     "unique_id": "'${DEVICE_ID}'_endpoint"
+     "unique_id": "'${PEER_ID}'_endpoint"
     }'
 
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/allowed_ips/config" -m \
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/allowed_ips/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'",
      "value_template": "{{ value_json.allowed_ips }}",
@@ -105,10 +106,10 @@ mqtt_autodiscovery() {
      "icon": "mdi:ip",
      "name": "Allowed IPs",
      "qos": "1",
-     "unique_id": "'${DEVICE_ID}'_allowed_ips"
+     "unique_id": "'${PEER_ID}'_allowed_ips"
     }'
 
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/handshake/config" -m \
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/handshake/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'",
      "value_template": "{{ value_json.latest_handshake }}",
@@ -125,10 +126,10 @@ mqtt_autodiscovery() {
      "icon": "mdi:timeline-clock",
      "name": "Latest Handshake",
      "qos": "1",
-     "unique_id": "'${DEVICE_ID}'_handshake"
+     "unique_id": "'${PEER_ID}'_handshake"
     }'
 
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/rx/config" -m \
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/rx/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'",
      "value_template": "{{ value_json.transfer_rx }}",
@@ -146,10 +147,10 @@ mqtt_autodiscovery() {
      "icon": "mdi:database-arrow-left-outline",
      "name": "Data Received",
      "qos": "1",
-     "unique_id": "'${DEVICE_ID}'_rx"
+     "unique_id": "'${PEER_ID}'_rx"
     }'
 
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${DEVICE_ID}/tx/config" -m \
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/tx/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'",
      "value_template": "{{ value_json.transfer_tx }}",
@@ -167,10 +168,10 @@ mqtt_autodiscovery() {
      "icon": "mdi:database-arrow-right-outline",
      "name": "Data Transmitted",
      "qos": "1",
-     "unique_id": "'${DEVICE_ID}'_tx"
+     "unique_id": "'${PEER_ID}'_tx"
     }'
 
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/binary_sensor/${DEVICE_ID}/online/config" -m \
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/binary_sensor/${PEER_ID}/online/config" -m \
     '{
      "state_topic": "'${TOPIC_ROOT}'",
      "value_template": "{{ value_json.online }}",
@@ -187,7 +188,7 @@ mqtt_autodiscovery() {
      "icon": "mdi:check-network-outline",
      "name": "Online",
      "qos": "1",
-     "unique_id": "'${DEVICE_ID}'_online"
+     "unique_id": "'${PEER_ID}'_online"
     }'
 
 }
@@ -195,9 +196,9 @@ mqtt_autodiscovery() {
 # Function to publish values to MQTT state topics
 publish_state_topics(){
   PUBLIC_KEY=$1
-  DEVICE_ID=$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
+  #DEVICE_ID=$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
   PEER_NAME=$(get_friendly_name $1)
-  TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_ID
+  TOPIC_ROOT=wg_status_to_mqtt/$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
   ENDPOINT_IP=$2
   ALLOWED_IPS=$3
   LATEST_HANDSHAKE=$(date -d @$4 +'%Y-%m-%d %H:%M:%S+00:00')
