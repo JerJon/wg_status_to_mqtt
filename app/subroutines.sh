@@ -3,7 +3,7 @@
 # Parse and update values for each peer
 update_values() {
   # Extract values for each peer in turn, and publish to MQTT
-  results=OFF
+  results=0
   while IFS= read -r RESULT; do
     public_key=$(echo $RESULT | awk '{print $2}')
     endpoint_ip=$(echo $RESULT | awk '{print $4}' | cut -d: -f1)
@@ -17,7 +17,7 @@ update_values() {
     # Send values to state topics
     publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $((transfer_rx / 1048576)) $((transfer_tx / 1048576))
     
-    results=ON
+    results=1
   done < <(wg show all dump | awk '{if (NF==9) print $0};')
   
   # Publish state_topics for server on / off
@@ -65,7 +65,6 @@ get_friendly_name() {
 # Function to create Home Assistant entities via MQTT autodiscovery for servers
 mqtt_autodiscovery_server() {
   SERVER_ID=$DEVICE_NAME
-  SERVER_NAME=$DEVICE_NAME
   TOPIC_ROOT=wg_status_to_mqtt/$SERVER_ID
   DEVICE_ID=wg_status_to_mqtt_$DEVICE_NAME
 
@@ -84,7 +83,7 @@ mqtt_autodiscovery_server() {
      },
      "device_class": "connectivity",
      "icon": "mdi:check-network-outline",
-     "name": "'${SERVER_NAME}' Online",
+     "name": "Server Online",
      "qos": "1",
      "unique_id": "'${SERVER_ID}'_online"
     }'
@@ -237,7 +236,7 @@ publish_state_topics(){
       "endpoint_ip": "'${ENDPOINT_IP:=-}'",
       "allowed_ips": "'${ALLOWED_IPS:=-}'",
       "latest_handshake": "'"${LATEST_HANDSHAKE:=-}"'",
-      "online": "'${ONLINE:-Off}'",
+      "online": "'${ONLINE:-OFF}'",
       "transfer_rx": "'${TRANSFER_RX:=-}'",
       "transfer_tx": "'${TRANSFER_TX:=-}'"
     }'
@@ -247,8 +246,20 @@ publish_state_topics(){
 publish_server_status() {
   status=$1
   TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_NAME
-  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -m \
+
+  if [ $status -eq 1 ]; then
+    mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -m \
     '{
-      "online": "'${status:-Off}'"
+      "online": "ON"
     }'
+  else
+    echo Server is Offline
+    mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -m \
+    '{
+      "online": "OFF"
+    }'
+    # Delete state topic values
+    TOPIC_ROOT=wg_status_to_mqtt
+    mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "${TOPIC_ROOT}" -d
+
 }
