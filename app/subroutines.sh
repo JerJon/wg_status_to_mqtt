@@ -18,14 +18,21 @@ update_values() {
   done < <(wg show all dump | awk '{if (NF==9) print $0};')
 }
 
-# Send autodiscovery messages for each peer
+# Send autodiscovery messages for peers and server
 update_autodiscovery() {
   echo Sending MQTT autodiscovery messages
+
+  # Extract public key for each server in turn, and send autodiscovery messages
+  while IFS= read -r RESULT; do
+    public_key=$(echo $RESULT | awk '{print $2}')
+    mqtt_autodiscovery_servers $public_key
+  done < <(wg show all dump | awk '{if (NF==5) print $0};')
+} 
 
   # Extract public key for each peer in turn, and send autodiscovery messages
   while IFS= read -r RESULT; do
     public_key=$(echo $RESULT | awk '{print $2}')
-    mqtt_autodiscovery $public_key
+    mqtt_autodiscovery_peers $public_key
   done < <(wg show all dump | awk '{if (NF==9) print $0};')
 }
 
@@ -53,31 +60,40 @@ get_friendly_name() {
   fi
 }
 
-# Function to create Home Assistant entities via MQTT autodiscovery
-mqtt_autodiscovery() {
+# Function to create Home Assistant entities via MQTT autodiscovery for servers
+mqtt_autodiscovery_servers() {
+  SERVER_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
+  SERVER_NAME=$(get_friendly_name $1)
+  TOPIC_ROOT=wg_status_to_mqtt/$SERVER_ID
+  DEVICE_ID=wg_status_to_mqtt_$DEVICE_NAME
+
+  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/binary_sensor/${SERVER_ID}/online/config" -m \
+    '{
+     "state_topic": "'${TOPIC_ROOT}'",
+     "value_template": "{{ value_json.online }}",
+     "device": {
+      "identifiers": [
+      "'${DEVICE_ID}'"
+      ],
+      "manufacturer": "wg_status_to_mqtt",
+      "model": "Wireguard Status to MQTT",
+      "name": "'${DEVICE_NAME}'",
+      "sw_version": "'${SW_VERSION}'"
+     },
+     "device_class": "connectivity",
+     "icon": "mdi:check-network-outline",
+     "name": "'${SERVER_NAME}' Server Online",
+     "qos": "1",
+     "unique_id": "'${SERVER_ID}'_online"
+    }'
+}
+
+# Function to create Home Assistant entities via MQTT autodiscovery for peers
+mqtt_autodiscovery_peers() {
   PEER_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
   PEER_NAME=$(get_friendly_name $1)
   TOPIC_ROOT=wg_status_to_mqtt/$PEER_ID
   DEVICE_ID=wg_status_to_mqtt_$DEVICE_NAME
-
-#  mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/name/config" -m \
-#    '{
-#     "state_topic": "'${TOPIC_ROOT}'",
-#     "value_template": "{{ value_json.peer_name }}",
-#     "device": {
-#      "identifiers": [
-#      "'${DEVICE_ID}'"
-#      ],
-#      "manufacturer": "wg_status_to_mqtt",
-#      "model": "Wireguard Status to MQTT",
-#      "name": "'${DEVICE_NAME}'",
-#      "sw_version": "'${SW_VERSION}'"
-#     },
-#     "icon": "mdi:identifier",
-#     "name": "Name",
-#     "qos": "1",
-#     "unique_id": "'${PEER_ID}'_name"
-#    }'
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/endpoint/config" -m \
     '{
@@ -204,7 +220,6 @@ mqtt_autodiscovery() {
 # Function to publish values to MQTT state topics
 publish_state_topics(){
   PUBLIC_KEY=$1
-  #DEVICE_ID=$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
   PEER_NAME=$(get_friendly_name $1)
   TOPIC_ROOT=wg_status_to_mqtt/$(echo $PUBLIC_KEY | md5sum | cut -d ' ' -f1)
   ENDPOINT_IP=$2
