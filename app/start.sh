@@ -20,18 +20,20 @@ export MQTT_IP=${MQTT_IP:-127.0.0.1}
 export MQTT_PORT=${MQTT_PORT:-1883}
 export MQTT_USERNAME=${MQTT_USERNAME:-user}
 export MQTT_PASSWORD=${MQTT_PASSWORD:-pass}
+export POLL_DELAY=${POLL_DELAY:=120}
 
 echo "Configuration options are:
   MQTT_IP=$MQTT_IP
   MQTT_PORT=$MQTT_PORT
   MQTT_USERNAME=$MQTT_USERNAME
-  MQTT_PASSWORD=Not Shown"
+  MQTT_PASSWORD=Not Shown
+  POLL_DELAY=$POLL_DELAY"
 
 # Main Loop
 while : ; do
   read_and_update
-  echo Sleeping for 60 secs
-  sleep 60
+  echo Sleeping for $POLL_DELAY secs
+  sleep $POLL_DELAY
 done
 
 echo Error Main Loop terminated unexpectedly
