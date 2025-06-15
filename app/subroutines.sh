@@ -93,13 +93,15 @@ mqtt_autodiscovery_server() {
 mqtt_autodiscovery_peers() {
   PEER_ID=$(echo $1 | md5sum | cut -d ' ' -f1)
   PEER_NAME=$(get_friendly_name $1)
-  TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_NAME/$PEER_ID
+  TOPIC_ROOT=wg_status_to_mqtt/$DEVICE_NAME
   DEVICE_ID=wg_status_to_mqtt_$DEVICE_NAME
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/endpoint/config" -m \
     '{
-     "state_topic": "'${TOPIC_ROOT}'",
+     "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.endpoint_ip }}",
+     "availability_topic": "'${TOPIC_ROOT}'",
+     "availability_template": "{{ value_json.online }}",
      "device": {
       "identifiers": [
       "'${DEVICE_ID}'"
@@ -117,7 +119,7 @@ mqtt_autodiscovery_peers() {
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/allowed_ips/config" -m \
     '{
-     "state_topic": "'${TOPIC_ROOT}'",
+     "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.allowed_ips }}",
      "device": {
       "identifiers": [
@@ -136,7 +138,7 @@ mqtt_autodiscovery_peers() {
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/handshake/config" -m \
     '{
-     "state_topic": "'${TOPIC_ROOT}'",
+     "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.latest_handshake }}",
      "device": {
       "identifiers": [
@@ -156,7 +158,7 @@ mqtt_autodiscovery_peers() {
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/rx/config" -m \
     '{
-     "state_topic": "'${TOPIC_ROOT}'",
+     "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.transfer_rx }}",
      "device": {
       "identifiers": [
@@ -177,7 +179,7 @@ mqtt_autodiscovery_peers() {
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/sensor/${PEER_ID}/tx/config" -m \
     '{
-     "state_topic": "'${TOPIC_ROOT}'",
+     "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.transfer_tx }}",
      "device": {
       "identifiers": [
@@ -198,7 +200,7 @@ mqtt_autodiscovery_peers() {
 
   mosquitto_pub -h $MQTT_IP -p $MQTT_PORT -u "${MQTT_USERNAME}" -P "${MQTT_PASSWORD}" -t "homeassistant/binary_sensor/${PEER_ID}/online/config" -m \
     '{
-     "state_topic": "'${TOPIC_ROOT}'",
+     "state_topic": "'${TOPIC_ROOT}'/$PEER_ID",
      "value_template": "{{ value_json.online }}",
      "device": {
       "identifiers": [
