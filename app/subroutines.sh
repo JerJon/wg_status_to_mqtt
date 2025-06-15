@@ -24,7 +24,7 @@ update_autodiscovery() {
 
   # Extract public key for each server in turn, and send autodiscovery messages
   while IFS= read -r RESULT; do
-    public_key=$(echo $RESULT | awk '{print $2}')
+    public_key=$(echo $RESULT | awk '{print $3}')
     mqtt_autodiscovery_servers $public_key
   done < <(wg show all dump | awk '{if (NF==5) print $0};')
 } 
@@ -82,7 +82,7 @@ mqtt_autodiscovery_servers() {
      },
      "device_class": "connectivity",
      "icon": "mdi:check-network-outline",
-     "name": "'${SERVER_NAME}' Server Online",
+     "name": "'${SERVER_NAME}' Online",
      "qos": "1",
      "unique_id": "'${SERVER_ID}'_online"
     }'
