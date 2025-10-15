@@ -3,7 +3,8 @@ FROM alpine:3.22.0
 # install dependencies
 RUN apk update && apk add --no-cache \
   wireguard-tools \
-  mosquitto-clients
+  mosquitto-clients \
+  docker
 
 # Copy configs and scripts
 RUN mkdir /conf /app
