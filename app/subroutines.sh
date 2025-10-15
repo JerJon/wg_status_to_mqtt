@@ -18,7 +18,7 @@ update_values() {
     publish_state_topics $public_key $endpoint_ip $allowed_ips $latest_handshake $((transfer_rx / 1048576)) $((transfer_tx / 1048576))
     
     results=1
-  done < <(wg show all dump | awk '{if (NF==9) print $0};')
+  done < <(docker exec wg-easy wg show all dump | awk '{if (NF==9) print $0};')
   
   # Publish state_topics for server on / off
   publish_server_status $results
