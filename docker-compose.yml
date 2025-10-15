@@ -1,6 +1,6 @@
 volumes:
   wg_status_to_mqtt:
-    external: true
+    #external: true
     
 services:
   wg_status_to_mqtt:
